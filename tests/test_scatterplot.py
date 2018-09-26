@@ -68,8 +68,8 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'quantitative')
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': 1, 'Y LABEL': 3},
-            {'X LABEL': 2, 'Y LABEL': 4},
+            {'x': 1, 'y': 3},
+            {'x': 2, 'y': 4},
         ])
 
     def test_x_numeric_drop_na_x(self):
@@ -80,8 +80,8 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'quantitative')
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': 1, 'Y LABEL': 3},
-            {'X LABEL': 3, 'Y LABEL': 5},
+            {'x': 1, 'y': 3},
+            {'x': 3, 'y': 5},
         ])
 
     def test_x_text(self):
@@ -92,8 +92,8 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'ordinal')
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': 'a', 'Y LABEL': 1},
-            {'X LABEL': 'b', 'Y LABEL': 2},
+            {'x': 'a', 'y': 1},
+            {'x': 'b', 'y': 2},
         ])
 
     def test_x_text_drop_na_x(self):
@@ -105,8 +105,8 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'ordinal')
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': 'a', 'Y LABEL': 1},
-            {'X LABEL': 'c', 'Y LABEL': 3},
+            {'x': 'a', 'y': 1},
+            {'x': 'c', 'y': 3},
         ])
 
     def test_x_text_too_many_values(self):
@@ -134,8 +134,8 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'temporal')
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': '2018-08-29T13:39:00Z', 'Y LABEL': 3},
-            {'X LABEL': '2018-08-29T13:40:00Z', 'Y LABEL': 4},
+            {'x': '2018-08-29T13:39:00Z', 'y': 3},
+            {'x': '2018-08-29T13:40:00Z', 'y': 4},
         ])
 
     def test_x_datetime_drop_na_x(self):
@@ -147,8 +147,8 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'temporal')
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': '2018-08-29T13:39:00Z', 'Y LABEL': 3},
-            {'X LABEL': '2018-08-29T13:40:00Z', 'Y LABEL': 5},
+            {'x': '2018-08-29T13:39:00Z', 'y': 3},
+            {'x': '2018-08-29T13:40:00Z', 'y': 5},
         ])
 
     def test_drop_missing_y_but_not_x(self):
@@ -160,8 +160,8 @@ class ConfigTest(unittest.TestCase):
         chart = form.make_chart(table)
         vega = chart.to_vega()
         self.assertEqual(vega['data']['values'], [
-            {'X LABEL': 1, 'Y LABEL': 4.0},
-            {'X LABEL': 3, 'Y LABEL': 6.0}
+            {'x': 1, 'y': 4.0},
+            {'x': 3, 'y': 6.0}
         ])
 
     def test_missing_y_param(self):
@@ -221,8 +221,8 @@ class ConfigTest(unittest.TestCase):
         chart = form.make_chart(min_table)
         vega = chart.to_vega()
         self.assertEqual(vega['title'], 'Scatter Plot')
-        self.assertEqual(vega['encoding']['x']['field'], 'A')
-        self.assertEqual(vega['encoding']['y']['field'], 'B')
+        self.assertEqual(vega['encoding']['x']['field'], 'x')
+        self.assertEqual(vega['encoding']['y']['field'], 'y')
 
     def test_integration_empty_params(self):
         table = pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
