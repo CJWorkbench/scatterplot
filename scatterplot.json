@@ -1,0 +1,41 @@
+{
+  "name": "Scatter Plot",
+  "id_name": "scatterplot",
+  "category" : "Visualize",
+  "icon" : "linechart",
+  "description" : "Create a scatter plot.",
+  "html_output": true,
+  "help_url":"modules/visualize/scatter-plot",
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "title",
+      "type": "string",
+      "placeholder": "Chart title"
+    },
+    {
+      "name": "X axis",
+      "id_name": "x_axis_label",
+      "type": "string",
+      "placeholder": "Label"
+    },
+    {
+      "name": "",
+      "id_name": "x_column",
+      "type": "column",
+      "placeholder": "Select X-Axis Column"
+    },
+    {
+      "name": "Y axis",
+      "id_name": "y_axis_label",
+      "type": "string",
+      "placeholder": "Label"
+    },
+    {
+      "name": "Columns",
+      "id_name": "y_column",
+      "type": "column",
+      "placeholder": "Select Y-Axis Column"
+    }
+  ]
+}
