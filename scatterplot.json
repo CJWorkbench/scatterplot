@@ -2,7 +2,7 @@
   "name": "Scatter Plot",
   "id_name": "scatterplot",
   "category" : "Visualize",
-  "icon" : "linechart",
+  "icon" : "scatterplot",
   "description" : "Create a scatter plot.",
   "html_output": true,
   "help_url":"modules/visualize/scatter-plot",
