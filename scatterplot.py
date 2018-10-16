@@ -83,17 +83,24 @@ class Chart:
         Return value is a list of dict records. Each has
         {'X Name': 1.0, 'Y Name': 1.0}
         """
-        data = {}
-        data[self.x_axis_label] = self.x_series.json_compatible_values
-        data[self.y_axis_label] = self.y_column.series
-        dataframe = pandas.DataFrame(data)
-        dataframe.dropna(inplace=True)
-        # to_dict preserves numpy numerical types. Must first convert to json
-        return json.loads(dataframe.to_json(orient='records'))
+        # Drop null rows that contain null in either series,
+        # since x can be either nparray or df, use pandas to drop
+        df = pandas.DataFrame({'x': self.x_series.json_compatible_values, 'y': self.y_column.series})
+        df.dropna(inplace=True)
+
+        # convert to json acceptable types
+        x = df['x'].tolist()
+        y = df['y'].tolist()
+
+        data = []
+        for idx, value in enumerate(x):
+            data.append({'x': value, 'y': y[idx]})
+
+        return data
 
     def to_vega(self) -> Dict[str, Any]:
         """
-        Build a Vega bar chart or grouped bar chart.
+        Build a Vega scatter plot.
         """
         x_axis = {
             'title': self.x_axis_label
@@ -145,17 +152,15 @@ class Chart:
 
             'encoding': {
                 'x': {
-                    'field': self.x_axis_label,
-                    'type': self.x_series.vega_data_type
+                    'field': 'x',
+                    'type': self.x_series.vega_data_type,
+                    'axis': x_axis,
                 },
 
                 'y': {
-                    'field': self.y_axis_label,
-                    'type': 'quantitative'
-                },
-
-                'color': {
-                    'legend': None
+                    'field': 'y',
+                    'type': 'quantitative',
+                    'axis': {'title': self.y_axis_label}
                 }
             },
         }
