@@ -1,7 +1,7 @@
 scatterplot
 -----------
 
-Workbench module that present number series as scattered dots.
+Workbench module that presents number series as scattered dots.
 
 Developing
 ----------
