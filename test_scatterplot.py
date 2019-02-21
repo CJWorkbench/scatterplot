@@ -5,7 +5,7 @@ import json
 import unittest
 import numpy as np
 import pandas as pd
-from pandas.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 from scatterplot import render, Form, GentleValueError
 
 
@@ -126,10 +126,8 @@ class ConfigTest(unittest.TestCase):
         t2 = datetime.datetime(2018, 8, 29, 13, 40)
         table = pd.DataFrame({'A': [t1, t2], 'B': [3, 4]})
         chart = form.make_chart(table)
-        assert np.array_equal(
-            chart.x_series.values,
-            np.array([t1, t2], dtype='datetime64[ms]')
-        )
+        assert_series_equal(chart.x_series.values,
+                            pd.Series([t1, t2], name='A'))
 
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'temporal')
@@ -226,7 +224,13 @@ class ConfigTest(unittest.TestCase):
 
     def test_integration_empty_params(self):
         table = pd.DataFrame({'A': [1, 2], 'B': [2, 3]})
-        result = render(table, {})
+        result = render(table, {
+            'title': '',
+            'x_column': '',
+            'y_column': '',
+            'x_axis_label': '',
+            'y_axis_label': '',
+        })
         self.assertResult(result, (
             table,
             '',
@@ -238,10 +242,9 @@ class ConfigTest(unittest.TestCase):
         result = render(table, {
             'title': 'TITLE',
             'x_column': 'A',
-            'x_data_type': '0',
             'y_column': 'B',
             'x_axis_label': 'X LABEL',
-            'y_axis_label': 'Y LABEL'
+            'y_axis_label': 'Y LABEL',
         })
         assert_frame_equal(result[0], table)
         self.assertEqual(result[1], '')

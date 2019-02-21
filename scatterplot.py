@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import datetime
 from typing import Any, Dict, List, Optional
 import pandas
@@ -26,14 +27,12 @@ class GentleValueError(ValueError):
     hasn't selected what to chart. So we'll display the error in the iframe:
     we'll be gentle with the user.
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
 
+@dataclass
 class XSeries:
-    def __init__(self, values: pandas.Series, name: str):
-        self.values = values
-        self.name = name
+    values: pandas.Series
+    name: str
 
     @property
     def vega_data_type(self) -> str:
@@ -52,28 +51,34 @@ class XSeries:
         In particular: datetime64 values will be converted to str.
         """
         if is_datetime64_dtype(self.values.dtype):
-            return self.values \
-                    .astype(datetime.datetime) \
-                    .apply(_format_datetime) \
-                    .values
+            try:
+                utc_series = self.values.dt.tz_convert(None).to_series()
+            except TypeError:
+                utc_series = self.values
+
+            str_series = utc_series.dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+            str_series = str_series.mask(self.values.isna())  # 'NaT' => np.nan
+
+            return str_series.values
         else:
             return self.values
 
 
+@dataclass(frozen=True)
 class YSeries:
-    def __init__(self, series: pandas.Series, name: str):
-        self.series = series
-        self.name = name
+    series: pandas.Series
+    name: str
 
+
+@dataclass(frozen=True)
 class Chart:
     """Fully-sane parameters. Columns are series."""
-    def __init__(self, *, title: str, x_axis_label: str, y_axis_label: str,
-                 x_series: XSeries, y_column: YSeries):
-        self.title = title
-        self.x_axis_label = x_axis_label
-        self.y_axis_label = y_axis_label
-        self.x_series = x_series
-        self.y_column = y_column
+
+    title: str
+    x_axis_label: str
+    y_axis_label: str
+    x_series: XSeries
+    y_column: YSeries
 
     def to_vega_data_values(self) -> List[Dict[str, Any]]:
         """
@@ -84,7 +89,10 @@ class Chart:
         """
         # Drop null rows that contain null in either series,
         # since x can be either nparray or df, use pandas to drop
-        df = pandas.DataFrame({'x': self.x_series.json_compatible_values, 'y': self.y_column.series})
+        df = pandas.DataFrame({
+            'x': self.x_series.json_compatible_values,
+            'y': self.y_column.series
+        })
         df.dropna(inplace=True)
 
         # convert to json acceptable types
@@ -167,28 +175,17 @@ class Chart:
         return ret
 
 
+@dataclass(frozen=True)
 class Form:
     """
     Parameter dict specified by the user: valid types, unchecked values.
     """
-    def __init__(self, *, title: str, x_axis_label: str, y_axis_label: str,
-                 x_column: str, y_column: str):
-        self.title = title
-        self.x_axis_label = x_axis_label
-        self.y_axis_label = y_axis_label
-        self.x_column = x_column
-        self.y_column = y_column
 
-    @staticmethod
-    def from_dict(params: Dict[str, Any]) -> 'Form':
-        title = str(params.get('title', ''))
-        x_axis_label = str(params.get('x_axis_label', ''))
-        y_axis_label = str(params.get('y_axis_label', ''))
-        x_column = str(params.get('x_column', ''))
-        y_column = str(params.get('y_column', ''))
-        return Form(title=title, x_axis_label=x_axis_label,
-                    y_axis_label=y_axis_label, x_column=x_column,
-                    y_column=y_column)
+    title: str
+    x_axis_label: str
+    y_axis_label: str
+    x_column: str
+    y_column: str
 
     def _make_x_series(self, table: pandas.DataFrame) -> XSeries:
         """
@@ -291,7 +288,8 @@ class Form:
 
 
 def render(table, params):
-    form = Form.from_dict(params)
+    form = Form(**params)
+
     try:
         chart = form.make_chart(table)
     except GentleValueError as err:
