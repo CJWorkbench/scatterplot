@@ -3,7 +3,7 @@
   "id_name": "scatterplot",
   "category" : "Visualize",
   "icon" : "scatterplot",
-  "description" : "Create a scatter plot.",
+  "description" : "Visualize data using a scatter plot chart.",
   "html_output": true,
   "help_url":"modules/visualize/scatter-plot",
   "parameters": [
