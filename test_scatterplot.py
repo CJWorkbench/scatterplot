@@ -256,3 +256,7 @@ class ConfigTest(unittest.TestCase):
         self.assertIn('"X LABEL"', text)
         self.assertIn('"Y LABEL"', text)
         self.assertRegex(text, '.*:\s*3[,}]')
+
+
+if __name__ == '__main__':
+    unittest.main()
