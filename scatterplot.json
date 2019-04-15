@@ -32,9 +32,10 @@
       "placeholder": "Label"
     },
     {
-      "name": "Columns",
+      "name": "",
       "id_name": "y_column",
       "type": "column",
+      "column_types": [ "number" ],
       "placeholder": "Select Y-Axis Column"
     }
   ]

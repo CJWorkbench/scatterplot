@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import datetime
+from string import Formatter
 from typing import Any, Dict, List, Optional
 import pandas
 from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
@@ -8,15 +9,30 @@ from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 MaxNAxisLabels = 300
 
 
-def _is_text(series):
-    return hasattr(series, 'cat') or series.dtype == object
-
-
 def _format_datetime(dt: Optional[datetime.datetime]) -> Optional[str]:
     if dt is pandas.NaT:
         return None
     else:
         return dt.isoformat() + 'Z'
+
+
+def python_format_to_d3_tick_format(python_format: str) -> str:
+    """
+    Build a d3-scale tickFormat specification based on Python str.
+
+    >>> python_format_to_d3_tick_format('{:,.2f}')
+    ',.2f'
+    >>> # d3-scale likes to mess about with precision. Its "r" format does
+    >>> # what we want; if we left it blank, we'd see format(30) == '3e+1'.
+    >>> python_format_to_d3_tick_format('{:,}')
+    ',r'
+    """
+    # Formatter.parse() returns Iterable[(literal, field_name, format_spec,
+    # conversion)]
+    specifier = next(Formatter().parse(python_format))[2]
+    if not specifier or specifier[-1] not in 'bcdoxXneEfFgGn%':
+        specifier += 'r'
+    return specifier
 
 
 class GentleValueError(ValueError):
@@ -33,6 +49,16 @@ class GentleValueError(ValueError):
 class XSeries:
     values: pandas.Series
     name: str
+    format: Optional[str]
+    """Python format specification (if X axis is numeric)."""
+
+    @property
+    def tick_format(self) -> Optional[str]:
+        """d3-scale tickFormat specification (if X axis is numeric)."""
+        if self.format is None:
+            return None
+        else:
+            return python_format_to_d3_tick_format(self.format)
 
     @property
     def vega_data_type(self) -> str:
@@ -68,6 +94,13 @@ class XSeries:
 class YSeries:
     series: pandas.Series
     name: str
+    format: str
+    """Python formatting string, like '{:,.2f}'."""
+
+    @property
+    def tick_format(self) -> str:
+        """d3-scale tickFormat specification."""
+        return python_format_to_d3_tick_format(self.format)
 
 
 @dataclass(frozen=True)
@@ -76,9 +109,12 @@ class Chart:
 
     title: str
     x_axis_label: str
+    """d3-scale tickFormat specification (if X axis is numeric)."""
+
     y_axis_label: str
     x_series: XSeries
     y_column: YSeries
+    """d3-scale tickFormat specification."""
 
     def to_vega_data_values(self) -> List[Dict[str, Any]]:
         """
@@ -110,7 +146,8 @@ class Chart:
         Build a Vega scatter plot.
         """
         x_axis = {
-            'title': self.x_axis_label
+            'title': self.x_axis_label,
+            'format': self.x_series.tick_format,
         }
         if self.x_series.vega_data_type == 'ordinal':
             x_axis.update({
@@ -119,7 +156,7 @@ class Chart:
             })
 
         ret = {
-            '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
+            '$schema': 'https://vega.github.io/schema/vega-lite/v3.json',
             'title': self.title,
             'config': {
                 'title': {
@@ -167,7 +204,10 @@ class Chart:
                 'y': {
                     'field': 'y',
                     'type': 'quantitative',
-                    'axis': {'title': self.y_axis_label}
+                    'axis': {
+                        'title': self.y_axis_label,
+                        'format': self.y_column.tick_format
+                    }
                 }
             },
         }
@@ -187,7 +227,8 @@ class Form:
     x_column: str
     y_column: str
 
-    def _make_x_series(self, table: pandas.DataFrame) -> XSeries:
+    def _make_x_series(self, table: pandas.DataFrame,
+                       input_columns: Dict[str, Any]) -> XSeries:
         """
         Create an XSeries ready for charting, or raise ValueError.
         """
@@ -195,11 +236,12 @@ class Form:
             raise GentleValueError('Please choose an X-axis column')
 
         series = table[self.x_column]
+        column = input_columns[self.x_column]
         nulls = series.isna().values
         x_values = table[self.x_column]
         safe_x_values = x_values[~nulls]  # so we can min(), len(), etc
 
-        if _is_text(x_values) and len(safe_x_values) > MaxNAxisLabels:
+        if column.type == 'text' and len(safe_x_values) > MaxNAxisLabels:
             raise ValueError(
                 f'Column "{self.x_column}" has {len(safe_x_values)} '
                 'text values. We cannot fit them all on the X axis. '
@@ -219,10 +261,15 @@ class Form:
                 'Please select a column with 2 or more values.'
             )
 
-        x_series = XSeries(x_values, self.x_column)
+        x_series = XSeries(
+            x_values,
+            self.x_column,
+            column.format
+        )
         return x_series
 
-    def make_chart(self, table: pandas.DataFrame) -> Chart:
+    def make_chart(self, table: pandas.DataFrame,
+                   input_columns: Dict[str, Any]) -> Chart:
         """
         Create a Chart ready for charting, or raise ValueError.
 
@@ -241,30 +288,17 @@ class Form:
         * Error if a Y column has fewer than 1 non-missing value
         * Default title, X and Y axis labels
         """
-        x_series = self._make_x_series(table)
+        x_series = self._make_x_series(table, input_columns)
         x_values = x_series.values
         if not self.y_column:
             raise GentleValueError('Please choose a Y-axis column')
-
-        if self.y_column not in table.columns:
-            raise ValueError(
-                f'Cannot plot Y-axis column "{self.y_column}" '
-                'because it does not exist'
-            )
-        elif self.y_column == self.x_column:
+        if self.y_column == self.x_column:
             raise ValueError(
                 f'Cannot plot Y-axis column "{self.y_column}" '
                 'because it is the X-axis column'
             )
 
         series = table[self.y_column]
-
-        if not is_numeric_dtype(series.dtype):
-            raise ValueError(
-                f'Cannot plot Y-axis column "{self.y_column}" '
-                'because it is not numeric. '
-                'Convert it to a number before plotting it.'
-            )
 
         # Find how many Y values can actually be plotted on the X axis. If
         # there aren't going to be any Y values on the chart, raise an
@@ -276,7 +310,8 @@ class Form:
                 'because it has no values'
             )
 
-        y_column = YSeries(series, self.y_column)
+        y_column = YSeries(series, self.y_column,
+                           input_columns[self.y_column].format)
 
         title = self.title or 'Scatter Plot'
         x_axis_label = self.x_axis_label or x_series.name
@@ -287,11 +322,11 @@ class Form:
                      y_column=y_column)
 
 
-def render(table, params):
+def render(table, params, *, input_columns):
     form = Form(**params)
 
     try:
-        chart = form.make_chart(table)
+        chart = form.make_chart(table, input_columns)
     except GentleValueError as err:
         return (table, '', {'error': str(err)})
     except ValueError as err:
