@@ -1,0 +1,30 @@
+id_name: scatterplot
+name: Scatter plot
+category: Visualize
+icon: scatterplot
+description: Visualize data using a scatter plot chart.
+html_output: true
+help_url: modules/visualize/scatter-lot
+parameters:
+- id_name: title
+  type: string
+  name: ''
+  placeholder: Chart title
+- id_name: x_axis_label
+  type: string
+  name: X axis
+  placeholder: Label
+- id_name: x_column
+  type: column
+  name: ''
+  column_types: [ text, number, datetime ] # we support all three
+  placeholder: Select X-Axis Column
+- id_name: y_axis_label
+  type: string
+  name: Y axis
+  placeholder: Label
+- id_name: y_column
+  type: column
+  name: ''
+  column_types: [ number ]
+  placeholder: Select Y-Axis Column
