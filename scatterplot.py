@@ -3,7 +3,6 @@ import datetime
 from string import Formatter
 from typing import Any, Dict, List, Optional
 import pandas
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 
 
 MaxNAxisLabels = 300
@@ -48,23 +47,22 @@ class GentleValueError(ValueError):
 @dataclass
 class XSeries:
     values: pandas.Series
-    name: str
-    format: Optional[str]
-    """Python format specification (if X axis is numeric)."""
+    column: Any
+    """RenderColumn with .name, .type and .format."""
 
     @property
     def tick_format(self) -> Optional[str]:
         """d3-scale tickFormat specification (if X axis is numeric)."""
-        if self.format is None:
+        if self.column.format is None:
             return None
         else:
-            return python_format_to_d3_tick_format(self.format)
+            return python_format_to_d3_tick_format(self.column.format)
 
     @property
     def vega_data_type(self) -> str:
-        if is_datetime64_dtype(self.values.dtype):
+        if self.column.type == 'datetime':
             return 'temporal'
-        elif is_numeric_dtype(self.values.dtype):
+        elif self.column.type == 'number':
             return 'quantitative'
         else:
             return 'ordinal'
@@ -76,7 +74,7 @@ class XSeries:
 
         In particular: datetime64 values will be converted to str.
         """
-        if is_datetime64_dtype(self.values.dtype):
+        if self.column.type == 'datetime':
             try:
                 utc_series = self.values.dt.tz_convert(None).to_series()
             except TypeError:
@@ -261,12 +259,7 @@ class Form:
                 'Please select a column with 2 or more values.'
             )
 
-        x_series = XSeries(
-            x_values,
-            self.x_column,
-            column.format
-        )
-        return x_series
+        return XSeries(x_values, column)
 
     def make_chart(self, table: pandas.DataFrame,
                    input_columns: Dict[str, Any]) -> Chart:
