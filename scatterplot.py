@@ -6,6 +6,7 @@ import pandas
 
 
 MaxNAxisLabels = 300
+MinTickStep = 1e-22 # should give same outcome as null but satisfy Vega schema
 
 
 def _format_datetime(dt: Optional[datetime.datetime]) -> Optional[str]:
@@ -51,12 +52,23 @@ class XSeries:
     """RenderColumn with .name, .type and .format."""
 
     @property
+    def name(self) -> str:
+        return self.column.name
+
+    @property
     def tick_format(self) -> Optional[str]:
         """d3-scale tickFormat specification (if X axis is numeric)."""
         if self.column.format is None:
-            return None
+            return ''
         else:
             return python_format_to_d3_tick_format(self.column.format)
+
+    @property
+    def tick_min_step(self) -> Optional[int]:
+        if self.tick_format is not None and self.tick_format.endswith('d'):
+            return 1
+        else:
+            return MinTickStep
 
     @property
     def vega_data_type(self) -> str:
@@ -99,6 +111,13 @@ class YSeries:
     def tick_format(self) -> str:
         """d3-scale tickFormat specification."""
         return python_format_to_d3_tick_format(self.format)
+
+    @property
+    def tick_min_step(self) -> Optional[int]:
+        if self.tick_format and self.tick_format[-1] == 'd':
+            return 1
+        else:
+            return MinTickStep
 
 
 @dataclass(frozen=True)
@@ -146,6 +165,7 @@ class Chart:
         x_axis = {
             'title': self.x_axis_label,
             'format': self.x_series.tick_format,
+            'tickMinStep': self.x_series.tick_min_step,
         }
         if self.x_series.vega_data_type == 'ordinal':
             x_axis.update({
@@ -204,7 +224,8 @@ class Chart:
                     'type': 'quantitative',
                     'axis': {
                         'title': self.y_axis_label,
-                        'format': self.y_column.tick_format
+                        'format': self.y_column.tick_format,
+                        'tickMinStep': self.y_column.tick_min_step,
                     }
                 }
             },
