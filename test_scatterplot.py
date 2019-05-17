@@ -83,7 +83,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_x_numeric_drop_na_x(self):
         form = self.build_form(x_column='A')
-        table = pd.DataFrame({'A': [1, np.nan, 3], 'B': [3, 4, 5]},
+        table = pd.DataFrame({'A': [np.nan, 2, 3], 'B': [3, 4, 5]},
                              dtype=np.number)
         chart = form.make_chart(table,
                                 {'A': Column('A', 'number', '{:,d}'),
@@ -91,7 +91,7 @@ class ConfigTest(unittest.TestCase):
         vega = chart.to_vega()
         self.assertEqual(vega['encoding']['x']['type'], 'quantitative')
         self.assertEqual(vega['data']['values'], [
-            {'x': 1, 'y': 3},
+            {'x': 2, 'y': 4},
             {'x': 3, 'y': 5},
         ])
 
