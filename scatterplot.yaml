@@ -2,7 +2,7 @@ id_name: scatterplot
 name: Scatter plot
 category: Visualize
 icon: scatterplot
-description: Visualize data using a scatter plot chart.
+description: Visualize the relationship between two sets of numerical data.
 html_output: true
 help_url: modules/visualize/scatter-lot
 parameters:
