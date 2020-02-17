@@ -7,7 +7,16 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_series_equal
-from scatterplot import render, Form, GentleValueError
+from scatterplot import (
+    render,
+    Form,
+    GentleValueError,
+    OnlyOneValueError,
+    NoValuesError,
+    TooManyTextValuesError,
+    EmptyAxisError,
+    SameAxesError
+)
 
 
 Column = namedtuple('Column', ('name', 'type', 'format'))
@@ -48,22 +57,14 @@ class ConfigTest(unittest.TestCase):
 
     def test_only_one_x_value(self):
         form = self.build_form(x_column='A')
-        with self.assertRaisesRegex(
-            ValueError,
-            'Column "A" has only 1 value. '
-            'Please select a column with 2 or more values.'
-        ):
+        with self.assertRaises(OnlyOneValueError):
             form.make_chart(pd.DataFrame({'A': [1, 1], 'B': [2, 3]}),
                             {'A': Column('A', 'number', '{:,d}'),
                              'B': Column('B', 'number', '{:,d}')})
 
     def test_no_x_values(self):
         form = self.build_form(x_column='A')
-        with self.assertRaisesRegex(
-            ValueError,
-            'Column "A" has no values. '
-            'Please select a column with data.'
-        ):
+        with self.assertRaises(NoValuesError):
             form.make_chart(pd.DataFrame({'A': [np.nan, np.nan], 'B': [2, 3]},
                                          dtype=np.float64),
                             {'A': Column('A', 'number', '{:,d}'),
@@ -127,12 +128,7 @@ class ConfigTest(unittest.TestCase):
     def test_x_text_too_many_values(self):
         form = self.build_form(x_column='A')
         table = pd.DataFrame({'A': ['a'] * 301, 'B': [1] * 301})
-        with self.assertRaisesRegex(
-            ValueError,
-            'Column "A" has 301 text values. We cannot fit them all on '
-            'the X axis. Please change the input table to have 10 or fewer '
-            'rows, or convert "A" to number or date.'
-        ):
+        with self.assertRaises(TooManyTextValuesError):
             form.make_chart(pd.DataFrame({'A': ['a'] * 301, 'B': [1] * 301}),
                             {'A': Column('A', 'text', None),
                              'B': Column('B', 'number', '{:,d}')})
@@ -197,10 +193,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_invalid_y_same_as_x(self):
         form = self.build_form(y_column='A')
-        with self.assertRaisesRegex(
-            ValueError,
-            'Cannot plot Y-axis column "A" because it is the X-axis column'
-        ):
+        with self.assertRaises(SameAxesError):
             form.make_chart(min_table, min_columns)
 
     def test_invalid_y_missing_values(self):
@@ -212,10 +205,7 @@ class ConfigTest(unittest.TestCase):
             'B': [4, np.nan, 6, 7, 8],
             'C': [np.nan, np.nan, 9, 10, np.nan],
         })
-        with self.assertRaisesRegex(
-            ValueError,
-            'Cannot plot Y-axis column "C" because it has no values'
-        ):
+        with self.assertRaises(EmptyAxisError):
             form.make_chart(table,
                             {'A': Column('A', 'number', '{:}'),
                              'B': Column('B', 'number', '{:}'),
