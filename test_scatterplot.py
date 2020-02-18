@@ -11,12 +11,8 @@ from scatterplot import (
     render,
     Form,
     GentleValueError,
-    OnlyOneValueError,
-    NoValuesError,
-    TooManyTextValuesError,
-    EmptyAxisError,
-    SameAxesError
 )
+from cjwmodule.testing.i18n import i18n_message
 
 
 Column = namedtuple('Column', ('name', 'type', 'format'))
@@ -47,28 +43,41 @@ class ConfigTest(unittest.TestCase):
 
     def test_missing_x_param(self):
         form = self.build_form(x_column='')
-        with self.assertRaisesRegex(
-            GentleValueError,
-            'Please choose an X-axis column'
-        ):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(pd.DataFrame({'A': [1, 2], 'B': [2, 3]}),
                             {'A': Column('A', 'number', '{:,d}'),
                              'B': Column('B', 'number', '{:,d}')})
+            self.assertEqual(
+                err.i18n_message, i18n_message("noXAxisError.message")
+            )
 
     def test_only_one_x_value(self):
         form = self.build_form(x_column='A')
-        with self.assertRaises(OnlyOneValueError):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(pd.DataFrame({'A': [1, 1], 'B': [2, 3]}),
                             {'A': Column('A', 'number', '{:,d}'),
                              'B': Column('B', 'number', '{:,d}')})
+            self.assertEqual(err.i18n_message, i18n_message(
+                "onlyOneValueError.message",
+                {
+                    "column_name": "A"
+                }
+            ))
 
     def test_no_x_values(self):
         form = self.build_form(x_column='A')
-        with self.assertRaises(NoValuesError):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(pd.DataFrame({'A': [np.nan, np.nan], 'B': [2, 3]},
                                          dtype=np.float64),
                             {'A': Column('A', 'number', '{:,d}'),
                              'B': Column('B', 'number', '{:,d}')})
+            
+            self.assertEqual(err.i18n_message, i18n_message(
+                "noValuesError.message",
+                {
+                    "column_name": "A"
+                }
+            ))
 
     def test_x_numeric(self):
         form = self.build_form(x_column='A')
@@ -128,10 +137,19 @@ class ConfigTest(unittest.TestCase):
     def test_x_text_too_many_values(self):
         form = self.build_form(x_column='A')
         table = pd.DataFrame({'A': ['a'] * 301, 'B': [1] * 301})
-        with self.assertRaises(TooManyTextValuesError):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(pd.DataFrame({'A': ['a'] * 301, 'B': [1] * 301}),
                             {'A': Column('A', 'text', None),
                              'B': Column('B', 'number', '{:,d}')})
+            
+            self.assertEqual(err.i18n_message, i18n_message(
+                "tooManyTextValuesError.message",
+                'Please change the input table to have 10 or fewer rows, or convert "{x_column}" to number or date.',
+                {
+                    'x_column': "A",
+                    'n_safe_x_values': 301,
+                }
+            ))
 
     def test_x_datetime(self):
         form = self.build_form(x_column='A')
@@ -185,16 +203,24 @@ class ConfigTest(unittest.TestCase):
 
     def test_missing_y_param(self):
         form = self.build_form(y_column='')
-        with self.assertRaisesRegex(
-            GentleValueError,
-            'Please choose a Y-axis column'
-        ):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(min_table, min_columns)
+            self.assertEqual(
+                err.i18n_message,
+                i18n_message(
+                    "noYAxisError.message"
+                )
+            )
 
     def test_invalid_y_same_as_x(self):
         form = self.build_form(y_column='A')
-        with self.assertRaises(SameAxesError):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(min_table, min_columns)
+            
+            self.assertEqual(err.i18n_message, i18n_message(
+                "sameAxesError.message",
+                {'column_name': "A"}
+            ))
 
     def test_invalid_y_missing_values(self):
         form = self.build_form(
@@ -205,11 +231,18 @@ class ConfigTest(unittest.TestCase):
             'B': [4, np.nan, 6, 7, 8],
             'C': [np.nan, np.nan, 9, 10, np.nan],
         })
-        with self.assertRaises(EmptyAxisError):
+        with self.assertRaises(GentleValueError) as err:
             form.make_chart(table,
                             {'A': Column('A', 'number', '{:}'),
                              'B': Column('B', 'number', '{:}'),
                              'C': Column('C', 'number', '{:}')})
+            
+            self.assertEqual(err.i18n_message, i18n_message(
+                "emptyAxisError.message",
+                {
+                    "column_name": "C"
+                }
+            ))
 
     def test_default_title_and_labels(self):
         form = self.build_form(title='', x_axis_label='', y_axis_label='')
@@ -237,8 +270,8 @@ class ConfigTest(unittest.TestCase):
         )
         self.assertResult(result, (
             table,
-            '',
-            {'error': 'Please choose an X-axis column'}
+            i18n_message("noXAxisError.message"),
+            {'error': "Please correct the error in this step's data or parameters"}
         ))
 
     def test_integration(self):

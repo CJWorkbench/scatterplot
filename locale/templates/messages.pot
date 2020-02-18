@@ -34,28 +34,38 @@ msgstr ""
 msgid "_spec.parameters.y_column.placeholder"
 msgstr ""
 
-#. default-message: You cannot plot Y-axis column {column_name} because it is the X-axis column
-#: scatterplot.py:68
-msgid "SameAxesError.message"
-msgstr ""
-
-#. default-message: Cannot plot Y-axis column "{column_name}" because it has no values
-#: scatterplot.py:84
-msgid "EmptyAxisError.message"
-msgstr ""
-
-#. default-message: Column "{column_name}" has no values. Please select a column with data.
-#: scatterplot.py:102
-msgid "NoValuesError.message"
-msgstr ""
-
-#. default-message: Column "{column_name}" has only 1 value. Please select a column with 2 or more values.
-#: scatterplot.py:120
-msgid "OnlyOneValueError.message"
+#. default-message: Please choose an X-axis column
+#: scatterplot.py:262
+msgid "noXAxisError.message"
 msgstr ""
 
 #. default-message: Column "{x_column}" has {n_safe_x_values} text values. We cannot fit them all on the X axis. Please change the input table to have 10 or fewer rows, or convert "{x_column}" to number or date.
-#: scatterplot.py:139
-msgid "TooManyTextValuesError.message"
+#: scatterplot.py:281
+msgid "tooManyTextValuesError.message"
+msgstr ""
+
+#. default-message: Column "{column_name}" has no values. Please select a column with data.
+#: scatterplot.py:286
+msgid "noValuesError.message"
+msgstr ""
+
+#. default-message: Column "{column_name}" has only 1 value. Please select a column with 2 or more values.
+#: scatterplot.py:295
+msgid "onlyOneValueError.message"
+msgstr ""
+
+#. default-message: Please choose a Y-axis column
+#: scatterplot.py:328
+msgid "noYAxisError.message"
+msgstr ""
+
+#. default-message: You cannot plot Y-axis column {column_name} because it is the X-axis column
+#: scatterplot.py:333
+msgid "sameAxesError.message"
+msgstr ""
+
+#. default-message: Cannot plot Y-axis column "{column_name}" because it has no values
+#: scatterplot.py:346
+msgid "emptyAxisError.message"
 msgstr ""
 
