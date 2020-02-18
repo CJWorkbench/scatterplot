@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-02-17 18:34+0000\n"
+"POT-Creation-Date: 2020-02-18 16:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -20,31 +20,31 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 msgid "_spec.name"
-msgstr ""
+msgstr "Γράφημα διασποράς"
 
 msgid "_spec.description"
-msgstr ""
+msgstr "Οπτικοποίηση της σχέσης μεταξύ δύο συνόλων αριθμητικών δεδομένων."
 
 msgid "_spec.parameters.title.placeholder"
-msgstr ""
+msgstr "Τίτλος γραφήματος"
 
 msgid "_spec.parameters.x_axis_label.name"
-msgstr ""
+msgstr "Άξονας X"
 
 msgid "_spec.parameters.x_axis_label.placeholder"
-msgstr ""
+msgstr "Ετικέτα"
 
 msgid "_spec.parameters.x_column.placeholder"
-msgstr ""
+msgstr "Επιλέξτε στήλη για Άξονα X"
 
 msgid "_spec.parameters.y_axis_label.name"
-msgstr ""
+msgstr "Άξονας Y"
 
 msgid "_spec.parameters.y_axis_label.placeholder"
-msgstr ""
+msgstr "Ετικέτα"
 
 msgid "_spec.parameters.y_column.placeholder"
-msgstr ""
+msgstr "Επιλέξτε στήλη για Άξονα Y"
 
 #: scatterplot.py:68
 msgid "SameAxesError.message"
