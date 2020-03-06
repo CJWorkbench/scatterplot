@@ -1,0 +1,86 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-02-18 18:31+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Γράφημα διασποράς"
+
+msgid "_spec.description"
+msgstr "Οπτικοποίηση της σχέσης μεταξύ δύο συνόλων αριθμητικών δεδομένων."
+
+msgid "_spec.parameters.title.placeholder"
+msgstr "Τίτλος γραφήματος"
+
+msgid "_spec.parameters.x_axis_label.name"
+msgstr "Άξονας X"
+
+msgid "_spec.parameters.x_axis_label.placeholder"
+msgstr "Ετικέτα"
+
+msgid "_spec.parameters.x_column.placeholder"
+msgstr "Επιλέξτε στήλη για Άξονα X"
+
+msgid "_spec.parameters.y_axis_label.name"
+msgstr "Άξονας Y"
+
+msgid "_spec.parameters.y_axis_label.placeholder"
+msgstr "Ετικέτα"
+
+msgid "_spec.parameters.y_column.placeholder"
+msgstr "Επιλέξτε στήλη για Άξονα Y"
+
+#: scatterplot.py:262
+msgid "noXAxisError.message"
+msgstr "Επιλέξτε μια στήλη για τον άξονα X"
+
+#: scatterplot.py:281
+msgid "tooManyTextValuesError.message"
+msgstr ""
+"Η στήλη \"{x_column}\" έχει {n_safe_x_values} τιμές κειμένου. Δεν μπορούν να "
+"χωρέσουν όλες στον άξονα X. Αλλάξτε τον πίνακα εισόδου ώστε να έχει 10 ή "
+"λιγότερες σειρές ή μετατρέψτε τη στήλη \"{x_column}\" σε αριθμό ή ημερομηνία."
+
+#: scatterplot.py:286
+msgid "noValuesError.message"
+msgstr ""
+"Η στήλη \"{column_name}\" δεν έχει τιμές. Επιλέξτε μια στήλη με δεδομένα."
+
+#: scatterplot.py:295
+msgid "onlyOneValueError.message"
+msgstr ""
+"Η στήλη \"{column_name}\" έχει μόνο 1 τιμή. Επιλέξτε μια στήλη με 2 ή "
+"περισσότερες τιμές."
+
+#: scatterplot.py:328
+msgid "noYAxisError.message"
+msgstr "Επιλέξτε μια στήλη για τον άξονα Y"
+
+#: scatterplot.py:333
+msgid "sameAxesError.message"
+msgstr ""
+"Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y {column_name} επειδή "
+"είναι η στήλη του άξονα X"
+
+#: scatterplot.py:346
+msgid "emptyAxisError.message"
+msgstr ""
+"Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y \"{column_name}\" επειδή "
+"δεν έχει τιμές"
+
