@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-09-30 15:04+0000\n"
+"POT-Creation-Date: 2020-09-30 15:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -46,11 +46,11 @@ msgstr "Ετικέτα"
 msgid "_spec.parameters.y_column.placeholder"
 msgstr "Επιλέξτε στήλη για Άξονα Y"
 
-#: scatterplot.py:260
+#: scatterplot.py:262
 msgid "noXAxisError.message"
 msgstr "Επιλέξτε μια στήλη για τον άξονα X"
 
-#: scatterplot.py:278
+#: scatterplot.py:280
 msgid "tooManyTextValuesError.message"
 msgstr ""
 "Η στήλη \"{x_column}\" έχει {n_safe_x_values} τιμές κειμένου. Δεν μπορούν"
@@ -58,27 +58,27 @@ msgstr ""
 "10 ή λιγότερες σειρές ή μετατρέψτε τη στήλη \"{x_column}\" σε αριθμό ή "
 "ημερομηνία."
 
-#: scatterplot.py:285
+#: scatterplot.py:287
 msgid "noValuesError.message"
 msgstr "Η στήλη \"{column_name}\" δεν έχει τιμές. Επιλέξτε μια στήλη με δεδομένα."
 
-#: scatterplot.py:294
+#: scatterplot.py:296
 msgid "onlyOneValueError.message"
 msgstr ""
 "Η στήλη \"{column_name}\" έχει μόνο 1 τιμή. Επιλέξτε μια στήλη με 2 ή "
 "περισσότερες τιμές."
 
-#: scatterplot.py:328
+#: scatterplot.py:330
 msgid "noYAxisError.message"
 msgstr "Επιλέξτε μια στήλη για τον άξονα Y"
 
-#: scatterplot.py:332
+#: scatterplot.py:334
 msgid "sameAxesError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y {column_name} επειδή "
 "είναι η στήλη του άξονα X"
 
-#: scatterplot.py:347
+#: scatterplot.py:349
 msgid "emptyAxisError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y \"{column_name}\" "
