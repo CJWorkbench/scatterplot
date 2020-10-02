@@ -2,3 +2,4 @@
 -------------
 
 * (internal) rename "datetime" to "timestamp"
+* (internal) simplify JSON-dump logic

@@ -153,16 +153,7 @@ class Chart:
             {"x": self.x_series.json_compatible_values, "y": self.y_column.series}
         )
         df.dropna(inplace=True)
-
-        # convert to json acceptable types
-        x = df["x"].tolist()
-        y = df["y"].tolist()
-
-        data = []
-        for idx, value in enumerate(x):
-            data.append({"x": value, "y": y[idx]})
-
-        return data
+        return df.to_dict("records")
 
     def to_vega(self) -> Dict[str, Any]:
         """
