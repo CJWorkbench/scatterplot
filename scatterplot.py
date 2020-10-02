@@ -79,8 +79,7 @@ class XSeries:
 
     @property
     def vega_data_type(self) -> str:
-        # DELETEME column.type == "datetime" https://www.pivotaltracker.com/story/show/174865394
-        if self.column.type == "datetime" or self.column.type == "timestamp":
+        if self.column.type == "timestamp":
             return "temporal"
         elif self.column.type == "number":
             return "quantitative"
@@ -94,8 +93,7 @@ class XSeries:
 
         In particular: datetime64 values will be converted to str.
         """
-        # DELETEME column.type == "datetime" https://www.pivotaltracker.com/story/show/174865394
-        if self.column.type == "datetime" or self.column.type == "timestamp":
+        if self.column.type == "timestamp":
             try:
                 utc_series = self.values.dt.tz_convert(None).to_series()
             except TypeError:

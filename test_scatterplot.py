@@ -171,28 +171,6 @@ class ConfigTest(unittest.TestCase):
             ),
         )
 
-    def test_x_datetime(self):
-        form = self.build_form(x_column="A")
-        t1 = datetime.datetime(2018, 8, 29, 13, 39)
-        t2 = datetime.datetime(2018, 8, 29, 13, 40)
-        table = pd.DataFrame({"A": [t1, t2], "B": [3, 4]})
-        chart = form.make_chart(
-            table,
-            # TODO support datetime format
-            {"A": Column("A", "datetime", None), "B": Column("B", "number", "{:,d}")},
-        )
-        assert_series_equal(chart.x_series.values, pd.Series([t1, t2], name="A"))
-
-        vega = chart.to_vega()
-        self.assertEqual(vega["encoding"]["x"]["type"], "temporal")
-        self.assertEqual(
-            vega["data"]["values"],
-            [
-                {"x": "2018-08-29T13:39:00Z", "y": 3},
-                {"x": "2018-08-29T13:40:00Z", "y": 4},
-            ],
-        )
-
     def test_x_timestamp(self):
         form = self.build_form(x_column="A")
         t1 = datetime.datetime(2018, 8, 29, 13, 39)
@@ -215,7 +193,7 @@ class ConfigTest(unittest.TestCase):
             ],
         )
 
-    def test_x_datetime_drop_na_x(self):
+    def test_x_timestamp_drop_na_x(self):
         form = self.build_form(x_column="A")
         t1 = datetime.datetime(2018, 8, 29, 13, 39)
         t2 = datetime.datetime(2018, 8, 29, 13, 40)
@@ -223,7 +201,7 @@ class ConfigTest(unittest.TestCase):
         chart = form.make_chart(
             table,
             # TODO support datetime format
-            {"A": Column("A", "datetime", None), "B": Column("B", "number", "{:,d}")},
+            {"A": Column("A", "timestamp", None), "B": Column("B", "number", "{:,d}")},
         )
         vega = chart.to_vega()
         self.assertEqual(vega["encoding"]["x"]["type"], "temporal")

@@ -17,7 +17,7 @@ parameters:
 - id_name: x_column
   type: column
   name: ''
-  column_types: [ text, number, datetime ] # we support all three
+  column_types: [ text, number, timestamp ] # we support all three
   placeholder: Select X-Axis Column
 - id_name: y_axis_label
   type: string
