@@ -3,3 +3,4 @@
 
 * (internal) rename "datetime" to "timestamp"
 * (internal) simplify JSON-dump logic
+* (internal) fix a unit-test warning

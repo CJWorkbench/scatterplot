@@ -322,7 +322,7 @@ class ConfigTest(unittest.TestCase):
         self.assertIn('"TITLE"', text)
         self.assertIn('"X LABEL"', text)
         self.assertIn('"Y LABEL"', text)
-        self.assertRegex(text, ".*:\s*3[,}]")
+        self.assertRegex(text, r".*:\s*3[,}]")
         self.assertEqual(result[2]["encoding"]["x"]["axis"]["format"], ",.2f")
         self.assertEqual(result[2]["encoding"]["y"]["axis"]["format"], ",r")
 
